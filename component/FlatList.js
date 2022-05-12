@@ -13,36 +13,31 @@ import {
 import appstyle from './appstyle';
 import axios from 'axios';
 
-
-
-
-
-const NewFlat = () => {
+const NewFlat = ({setPackData}) => {
 	const [packdata, setPackdata] = React.useState([])
 	const box 	= require('./../images/box.png');
 	const choosePackage 	= require('./../images/choosePackage.png');
 	const [selIndex, updIndex] = React.useState("0");
 	const _onViewableItemsChanged = useCallback(({ viewableItems, changed }) => {
     //console.log("Visible items are", viewableItems[0]["index"]);
-    console.log("Visible items are", viewableItems);
+    //console.log("Visible items are", viewableItems);
     //console.log("===============================================");
-	const apiurl = 'https://ooduacargo.com/booking/api/package.php'
-	
-	
-	
-	let vItemKey = 0;
-	for (let vItem of viewableItems) {
-		vItemKey = vItem["key"]
-		console.log('----->> ', vItemKey, vItem,'<<-----');
-	}
-	updIndex(vItemKey); 
-      ///console.log("Changed in this iteration", changed);
-      //if (typeof(viewableItems[0]["index"]) != "undefined"){
-        //updIndex(viewableItems[0]["index"]+1);
-      //}
+    const apiurl = 'https://ooduacargo.com/booking/api/package.php'
+
+    let vItemKey = 0;
+    for (let vItem of viewableItems) {
+      vItemKey = vItem["key"]
+      console.log('----->> ', vItemKey, vItem,'<<-----');
+    }
+    updIndex(vItemKey); 
+        ///console.log("Changed in this iteration", changed);
+        //if (typeof(viewableItems[0]["index"]) != "undefined"){
+          //updIndex(viewableItems[0]["index"]+1);
+        //}
     
   }, []);
 
+  setPackData(selIndex);
   const _viewabilityConfig = {
       itemVisiblePercentThreshold: 85,
       backgroundColor:'#2DBB54',

@@ -68,8 +68,18 @@ const Stack = createNativeStackNavigator();
 function UserDrawer() {
   return (
     <Drawer.Navigator  drawerContent={(props) => <CustomDrawerContent {...props} />}>
-      <Drawer.Screen name="MyBooking" component={Booking} options={{ headerShown: false,  animation:"slide_from_left", drawerIcon: ({ focused, size }) => (<Image source={require('../images/logo2.png')} style={[ { height: 50, width: 200 }]} />)}} />  
-      <Drawer.Screen name="Booking" component={Booking} options={{ headerShown: false,  animation:"slide_from_left", }} />  
+      <Drawer.Screen  drawerBackgroundColor="rgba(0,0,0,0.5)"
+        name="MyBooking" 
+        component={Booking} 
+        screenStyle={{backgroundColor:"#FF4"}}
+        options={{ 
+          headerShown: false,  
+          animation:"slide_from_left", 
+          backgroundColor:'#f00', 
+          drawerIcon: ({ focused, size }) => (<Image source={require('../images/logo-menu.png')} style={[ { height: 60, width: 245 }]} />)
+        }} 
+      />  
+      <Drawer.Screen drawerBackgroundColor="rgba(0,0,0,0.5)" name="Booking" component={Booking} options={{ headerShown: false,  animation:"slide_from_left", }} />  
       <Drawer.Screen name="Logout" component={Logout} options={{ headerShown: false,  animation:"slide_from_left", }} />
     </Drawer.Navigator>
   );

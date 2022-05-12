@@ -14,8 +14,8 @@ const appicon = require('./../images/appicon.png');
 
 
 const LocationComp = ({ navigation, frmLocData, toLocData }) => {
-	const [fromLocation, updFromLocation] = React.useState("Behala");
-	const [toLocation, updToLocation] = React.useState("SaltLake");
+	const [fromLocation, updFromLocation] = React.useState("");
+	const [toLocation, updToLocation] = React.useState("");
 	
 	const keyboard 		= useKeyboard();
 	var locationHeight 	= 3;
@@ -68,17 +68,21 @@ const LocationComp = ({ navigation, frmLocData, toLocData }) => {
 
 const Screen = ({ navigation }) => {
 	const [data, setData] = useState(false);
-	const [frmLoc, setFrmLocation] = useState('Kolkata');
-	const [toLoc, setToLocation] 	= useState('Delhi');
+	const [frmLoc, setFrmLocation] 	= useState('');
+	const [toLoc, setToLocation] 	= useState('');
+	const [selectedPack, setPack]	= useState(1);
 	const frmLocData = (locData) => {
 		setFrmLocation(locData)
 	}
 	const toLocData = (locData) => {
 		setToLocation(locData)
 	}
+	const setPackData = (packData) => {
+		setPack(packData)
+	}
 	
 	const childToParent = (childdata) => {
-		console.log('--here 022--', data)
+		//console.log('--here 022--', data)
 		setData(childdata);
 	}
 
@@ -94,8 +98,8 @@ const Screen = ({ navigation }) => {
 				<LocationComp  navigation={navigation} frmLocData={frmLocData} toLocData={toLocData} />
 				<View style={appstyle.choosePackage} >
 					<View style={appstyle.topHr} />
-					<FlatList />
-					<ReceiverDetails  childToParent={childToParent} frmCity={frmLoc} toCity={toLoc} />
+					<FlatList setPackData={setPackData} />
+					<ReceiverDetails  childToParent={childToParent} frmCity={frmLoc} toCity={toLoc} packDetails={selectedPack} />
 				</View>
 			</ScrollView>
 		</SafeAreaView>

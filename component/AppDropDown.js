@@ -10,7 +10,7 @@ import dropdownstyle from './dropdownstyle'
 	  {label: 'AIR Shipping @10.50/pound', value: 'AirShipping'}
   ];
 
-const DropdownComponent = () => {
+const DropdownComponent = ({setShipping}) => {
 const [value, setValue] = useState(null);
 const [isFocus, setIsFocus] = useState(false);
 //{renderLabel()}
@@ -25,7 +25,7 @@ const [isFocus, setIsFocus] = useState(false);
       return null;
     };
 
-    
+    setShipping(value);
 
 
     return (

@@ -3,19 +3,22 @@ import { Modal, Text, Image, TextInput, View, Pressable, TouchableOpacity, Activ
 import AppDropDown from './AppDropDown';
 import appstyle from './appstyle';
 
-const Screen = ({ navigation , childToParent, frmCity, toCity}) => {
+const Screen = ({ navigation , childToParent, frmCity, toCity, packDetails}) => {
 	const [modalStatus, updModalStatus] 	= React.useState(false);
 	const [isLoading, setLoading] 			= React.useState(false);
 	const bookingSuccess 					= require('./../images/bookingSuccess.png');
 	
-	const [receiverName, updReceiverName] 			= React.useState("Receiver Name");
-	const [receiverPhone, updReceiverPhone] 		= React.useState(1234567890);//"Receiver Phone"
-	const [receiverEmail, updReceiverEmail] 		= React.useState('test01@gmail.com');//"Receiver Email"
-	const [receiverShipping, updReceiverShipping] 	= React.useState("");
+	const [receiverName, updReceiverName] 			= React.useState('');
+	const [receiverPhone, updReceiverPhone] 		= React.useState('');//"Receiver Phone"
+	const [receiverEmail, updReceiverEmail] 		= React.useState('');//"Receiver Email"
+	const [receiverShipping, updReceiverShipping] 	= React.useState('');
 	const [barrelUnit, updBarrelUnit] 				= React.useState(0);
 	const [regularBagUnit, updRegularBagUnit] 		= React.useState(0);
 	const [tallBagUnit, updTallBagUnit] 			= React.useState(0);
 	
+	const setShipping = (data) => {
+		updReceiverShipping(data)
+	}
 
 	console.log('frmCity, toCity :: ',frmCity, toCity);
 	
@@ -27,7 +30,7 @@ const Screen = ({ navigation , childToParent, frmCity, toCity}) => {
 		Keyboard.dismiss();
 		setLoading(true);
 		//let dataToSend = {email: username, password: pwd};
-		let dataToSend = {frmCity:frmCity, toCity:toCity, receiverName:receiverName, receiverPhone:receiverPhone, receiverEmail:receiverEmail, receiverShipping:receiverShipping, barrelUnit:barrelUnit, regularBagUnit:regularBagUnit, tallBagUnit:tallBagUnit};
+		let dataToSend = {frmCity:frmCity, toCity:toCity, packDetails:packDetails, receiverName:receiverName, receiverPhone:receiverPhone, receiverEmail:receiverEmail, receiverShipping:receiverShipping, barrelUnit:barrelUnit, regularBagUnit:regularBagUnit, tallBagUnit:tallBagUnit};
 		let formBody = [];
 		for (let key in dataToSend) {
 			let encodedKey = encodeURIComponent(key);
@@ -112,7 +115,7 @@ const Screen = ({ navigation , childToParent, frmCity, toCity}) => {
 				placeholder="Receiver Email"
 			/>
 			<Text style={appstyle.receiverDetailsTxt}>Shipping</Text>
-			<AppDropDown />
+			<AppDropDown setShipping={setShipping} />
 			<View style={appstyle.choosePack}>
 				<Text style={appstyle.receiverDetailsTxt}>Barrel Unit</Text>
 				<Text style={appstyle.bagDetails}>Barrel Price is $250 maximum weight per Barrel is 250 lbs</Text>
