@@ -3,6 +3,75 @@ import { ImageBackground, StyleSheet, Text, Button, Image, TextInput, View, Aler
 import { useKeyboard } from '@react-native-community/hooks';
 import appstyle from './appstyle';
 
+
+// import statusCodes along with GoogleSignin
+import { GoogleSignin, GoogleSigninButton, statusCodes } from '@react-native-google-signin/google-signin';
+
+GoogleSignin.configure({
+	scopes: ['https://www.googleapis.com/auth/drive.readonly'], // [Android] what API you want to access on behalf of the user, default is email and profile
+	webClientId: '<FROM DEVELOPER CONSOLE>', // client ID of type WEB for your server (needed to verify user ID and offline access)
+	offlineAccess: true, // if you want to access Google API on behalf of the user FROM YOUR SERVER
+	hostedDomain: '', // specifies a hosted domain restriction
+	forceCodeForRefreshToken: true, // [Android] related to `serverAuthCode`, read the docs link below *.
+	accountName: '', // [Android] specifies an account name on the device that should be used
+	iosClientId: '<FROM DEVELOPER CONSOLE>', // [iOS] if you want to specify the client ID of type iOS (otherwise, it is taken from GoogleService-Info.plist)
+	googleServicePlistPath: '', // [iOS] if you renamed your GoogleService-Info file, new name here, e.g. GoogleService-Info-Staging
+	openIdRealm: '', // [iOS] The OpenID2 realm of the home web server. This allows Google to include the user's OpenID Identifier in the OpenID Connect ID token.
+	profileImageSize: 120, // [iOS] The desired height (and width) of the profile image. Defaults to 120px
+  });
+
+// Somewhere in your code
+signIn = async () => {
+  try {
+    await GoogleSignin.hasPlayServices();
+    const userInfo = await GoogleSignin.signIn();
+    this.setState({ userInfo });
+  } catch (error) {
+    if (error.code === statusCodes.SIGN_IN_CANCELLED) {
+      // user cancelled the login flow
+    } else if (error.code === statusCodes.IN_PROGRESS) {
+      // operation (e.g. sign in) is in progress already
+    } else if (error.code === statusCodes.PLAY_SERVICES_NOT_AVAILABLE) {
+      // play services not available or outdated
+    } else {
+      // some other error happened
+    }
+  }
+};
+
+getCurrentUserInfo = async () => {
+	try {
+	  const userInfo = await GoogleSignin.signInSilently();
+	  this.setState({ userInfo });
+	} catch (error) {
+	  if (error.code === statusCodes.SIGN_IN_REQUIRED) {
+		// user has not signed in yet
+	  } else {
+		// some other error
+	  }
+	}
+  };
+
+  isSignedIn = async () => {
+	const isSignedIn = await GoogleSignin.isSignedIn();
+	this.setState({ isLoginScreenPresented: !isSignedIn });
+  };
+
+  getCurrentUser = async () => {
+	const currentUser = await GoogleSignin.getCurrentUser();
+	this.setState({ currentUser });
+  };
+
+
+
+
+
+
+
+
+
+
+
 const Screen = ({ navigation }) => {
     const image = require('./../images/login.png');
 	const [msg, setErrortext] = React.useState('');
@@ -101,10 +170,31 @@ console.log('=======');
 		logoHeight = 8;
 	}
 
+	return (
+		<GoogleSigninButton
+			style={{ width: 192, height: 48 }}
+			size={GoogleSigninButton.Size.Wide}
+			color={GoogleSigninButton.Color.Dark}
+			onPress={this._signIn}
+			//disabled={this.state.isSigninInProgress}
+		/>
+	);
+
+
     return (
         <ImageBackground source={image} style={appstyle.container} >
 			<View style={{ flex: 17 }}>
 				<Image  source={logo} style={appstyle.reglogo} />
+			</View>
+
+			<View>
+				<GoogleSigninButton
+					style={{ width: 192, height: 48 }}
+					size={GoogleSigninButton.Size.Wide}
+					color={GoogleSigninButton.Color.Dark}
+					onPress={this._signIn}
+					//disabled={this.state.isSigninInProgress}
+				/>;
 			</View>
 
 			<View style={appstyle.loginFrmContainer}>

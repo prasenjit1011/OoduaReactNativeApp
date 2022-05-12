@@ -1,17 +1,16 @@
 import React from 'react';
-import { SafeAreaView, ScrollView, ImageBackground, StyleSheet, Text, Button, Image, TextInput, View, Alert, Pressable, TouchableOpacity, ActivityIndicator } from "react-native";
+import { SafeAreaView, ScrollView, ImageBackground, StyleSheet, Text, Button, Image, TextInput, View, Alert, Pressable, TouchableOpacity, ActivityIndicator, Keyboard } from "react-native";
 import appstyle from './appstyle';
 import { useKeyboard } from '@react-native-community/hooks'
 
 
 const Screen = ({ navigation }) => {
     const image = require('./../images/register.png');
-    const [msg, updateMsg] = React.useState('fghj hjk');
+    const [msg, setErrortext] = React.useState('');
 	const [fullname, onChangeFullname] = React.useState("Name");
     const [username, onChangeUsername] = React.useState("test@cargo.com");
-	const [pwd, onChangePwd] = React.useState("");
-
     const [phoneNum, onChangePhone] = React.useState("1234567890");
+    const [pwd, onChangePwd] = React.useState("");
     const [confirmPwd, onChangeConfirmPwd] = React.useState("");
 
 	const avatar = require('./../images/avatar.png');
@@ -19,15 +18,87 @@ const Screen = ({ navigation }) => {
 	const phone = require('./../images/phone01.png');
 	const lock = require('./../images/lock01.png');
 	const [isLoading, setLoading] = React.useState(false);
-	const doSignup = async () => {
-		setLoading(true);
 
-		setTimeout(function () {
-			setLoading(false);
-			navigation.navigate('Booking')
-		}, 2000);
+	const doSignup = () => {
+		console.log('----------');
+		setErrortext('');
 		
+        
+        if (!fullname) {
+			setErrortext('Please Enter Name');
+			return;
+		}
+        if (!username) {
+			setErrortext('Please Enter Email Id');
+			return;
+		}
+        if (!phoneNum) {
+			setErrortext('Please Enter Phone Number');
+			return;
+		}
+		if (!pwd) {
+			setErrortext('Please Enter Password');
+			return;
+		}
+        if (!confirmPwd) {
+			setErrortext('Please Enter Confirm Password');
+			return;
+		}
+        if (pwd != confirmPwd) {
+			setErrortext('Password and Confirm Password Mismatch');
+			return;
+		}
+        
+        console.log(fullname, username, phoneNum, pwd, confirmPwd);
+		console.log('=======');
+		Keyboard.dismiss();
+		setLoading(true);
+		//let dataToSend = {email: username, password: pwd};
+		let dataToSend = {name: fullname, email: username, phoneNum: phoneNum, password: pwd};
+		let formBody = [];
+		for (let key in dataToSend) {
+			let encodedKey = encodeURIComponent(key);
+			let encodedValue = encodeURIComponent(dataToSend[key]);
+			formBody.push(encodedKey + '=' + encodedValue);
+		}
+		formBody = formBody.join('&');
+	  
+		fetch('https://ooduacargo.com/booking/api/create_account.php',{
+			method: 'POST',
+			body: formBody,
+			headers: {
+				//Header Defination
+				'Content-Type':'application/x-www-form-urlencoded;charset=UTF-8',
+				'Authorization':'Bearer f85126705d13453e57a54145c34c53e904ac8c78c1d4360ff14d002e1341dc49'
+			},
+		})
+		.then((response) => response.json())
+		.then((responseJson) => {
+			//Hide Loader
+			setLoading(false);
+			console.log(854, responseJson);
+
+			if(responseJson.status){
+				setTimeout(function () {
+					setLoading(false);
+					navigation.navigate('Booking')
+				}, 1);
+			}
+			else{
+				setErrortext(responseJson.msg);
+				return;
+			}
+
+		})
+		.catch((error) => {
+		  //Hide Loader
+		  setLoading(false);
+		  console.error(222,error);
+		});
+
 	};
+	
+
 
 
 	const keyboard = useKeyboard()
@@ -45,9 +116,8 @@ const Screen = ({ navigation }) => {
             </View>
             <SafeAreaView style={appstyle.frmContainer}>
                 <ScrollView style={appstyle.scrollView}>
-
                     <View style={{ flex: 28, padding:"5%"  }}>
-                        
+                    {(keyboard.keyboardShown)?<></>:<Text style={appstyle.txtMsg}>{msg}</Text>}
                         <View style={appstyle.sectionStyle}>
                             <Image
                                 source={avatar}

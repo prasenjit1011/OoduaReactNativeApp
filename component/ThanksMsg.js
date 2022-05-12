@@ -6,7 +6,7 @@ const ThanksMsg = ({ navigation }) => {
     const bookingSuccess 	= require('./../images/bookingSuccess.png');
     return (
         <Modal 
-            visible={false}
+            visible={true}
             swipeDirection={['up', 'left', 'right', 'down']}
             style={appstyle.modalView}
             transparent={true}

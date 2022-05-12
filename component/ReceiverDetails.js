@@ -1,23 +1,76 @@
 import React, {useState} from 'react';
-import { Modal, Text, Image, TextInput, View, Pressable, TouchableOpacity, ActivityIndicator } from "react-native";
+import { Modal, Text, Image, TextInput, View, Pressable, TouchableOpacity, ActivityIndicator, Keyboard } from "react-native";
 import AppDropDown from './AppDropDown';
 import appstyle from './appstyle';
 
-const Screen = ({ navigation , childToParent}) => {
-	const [receiverName, updReceiverName] = React.useState("");
-	const [modalStatus, updModalStatus] = React.useState(false);
-	const [receiverPhone, updReceiverPhone] = React.useState("");
-	const [receiverEmail, updReceiverEmail] = React.useState("");
-	const [receiverShipping, updReceiverShipping] = React.useState("");
-	const [barrelUnit, updBarrelUnit] = React.useState("");
-	const [regularBagUnit, updRegularBagUnit] = React.useState("");
-	const [tallBagUnit, updTallBagUnit] = React.useState("");
-	const bookingSuccess 	= require('./../images/bookingSuccess.png');
+const Screen = ({ navigation , childToParent, frmCity, toCity}) => {
+	const [modalStatus, updModalStatus] 	= React.useState(false);
+	const [isLoading, setLoading] 			= React.useState(false);
+	const bookingSuccess 					= require('./../images/bookingSuccess.png');
+	
+	const [receiverName, updReceiverName] 			= React.useState("Receiver Name");
+	const [receiverPhone, updReceiverPhone] 		= React.useState(1234567890);//"Receiver Phone"
+	const [receiverEmail, updReceiverEmail] 		= React.useState('test01@gmail.com');//"Receiver Email"
+	const [receiverShipping, updReceiverShipping] 	= React.useState("");
+	const [barrelUnit, updBarrelUnit] 				= React.useState(0);
+	const [regularBagUnit, updRegularBagUnit] 		= React.useState(0);
+	const [tallBagUnit, updTallBagUnit] 			= React.useState(0);
+	
 
-	const [isLoading, setLoading] = React.useState(false);
+	console.log('frmCity, toCity :: ',frmCity, toCity);
+	
 	const doBooking = async () => {
+		
+        console.log(receiverName, receiverPhone, receiverEmail, receiverShipping, barrelUnit, regularBagUnit, tallBagUnit);
+		//alert(789456);
+		console.log('=======');
+		Keyboard.dismiss();
 		setLoading(true);
-		updModalStatus(true);
+		//let dataToSend = {email: username, password: pwd};
+		let dataToSend = {frmCity:frmCity, toCity:toCity, receiverName:receiverName, receiverPhone:receiverPhone, receiverEmail:receiverEmail, receiverShipping:receiverShipping, barrelUnit:barrelUnit, regularBagUnit:regularBagUnit, tallBagUnit:tallBagUnit};
+		let formBody = [];
+		for (let key in dataToSend) {
+			let encodedKey = encodeURIComponent(key);
+			let encodedValue = encodeURIComponent(dataToSend[key]);
+			formBody.push(encodedKey + '=' + encodedValue);
+		}
+		formBody = formBody.join('&');
+	  
+		fetch('https://ooduacargo.com/booking/api/booking_create.php',{
+			method: 'POST',
+			body: formBody,
+			headers: {
+				//Header Defination
+				'Content-Type':'application/x-www-form-urlencoded;charset=UTF-8',
+				'Authorization':'Bearer f85126705d13453e57a54145c34c53e904ac8c78c1d4360ff14d002e1341dc49'
+			},
+		})
+		.then((response) => response.json())
+		.then((responseJson) => {
+			//Hide Loader
+			setLoading(false);
+			console.log(854, responseJson);
+			updModalStatus(true);
+			/*
+			if(responseJson.status){
+
+			}
+			else{
+				//setErrortext(responseJson.msg);
+				return;
+			}*/
+		})
+		.catch((error) => {
+			//Hide Loader
+			setLoading(false);
+			console.error(222,error);
+		});
+		
+		
+		
+		//alert(876);
+		setLoading(true);
+		
 		childToParent(true);
 		/*
 		setTimeout(function () {
@@ -32,7 +85,8 @@ const Screen = ({ navigation , childToParent}) => {
 		*/
 	};	
 
-
+	//onPress={() => {updModalStatus(true);childToParent(true);}}
+	
     return (
         <>
 			<Text style={appstyle.receiverDetails}>Receiver Details :: {modalStatus}</Text>
@@ -90,13 +144,11 @@ const Screen = ({ navigation , childToParent}) => {
 				placeholder="Tall Bag Unit"
 			/>
 
-
-			<TouchableOpacity style={[appstyle.bookBtn, {flexDirection:'row'}]} onPress={() => {updModalStatus(true);childToParent(true);}}>
+			<TouchableOpacity style={[appstyle.bookBtn, {flexDirection:'row'}]} onPress={() => doBooking()}>
 				<Text style={appstyle.bookingBtnTxt}>{modalStatus?'Thank You!':'Book'}</Text>
 				<ActivityIndicator animating={isLoading} style={{borderColor:'#FFF', shadowColor:'#FFF'}} />
 			</TouchableOpacity>
-
-
+			
 			<Modal 
 				visible={modalStatus?true:false}
 				swipeDirection={['up', 'left', 'right', 'down']}

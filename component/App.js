@@ -34,7 +34,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createDrawerNavigator, DrawerContentScrollView, DrawerItemList, DrawerItem, } from '@react-navigation/drawer';
 console.disableYellowBox = true;
 
-import BseLogin from './BseLogin';
+import BseLogin from './google/Gpp';
 import Login from './Login';
 import Booking from './Booking';
 import CreateAccount from './CreateAcc';
@@ -42,6 +42,8 @@ import Forgotpassword from './Forgotpassword';
 import appstyle from './appstyle';
 const appicon 		= require('./../images/appicon.png');
 const loginBgImg 	= require('./../images/login.png');
+
+//const BseLogin = ({ navigation }) => {return (<Text>PPP</Text>);}
 
 /*
 <DrawerItem label="Close drawer" onPress={() => props.navigation.closeDrawer()} />
@@ -66,6 +68,7 @@ const Stack = createNativeStackNavigator();
 function UserDrawer() {
   return (
     <Drawer.Navigator  drawerContent={(props) => <CustomDrawerContent {...props} />}>
+      <Drawer.Screen name="MyBooking" component={Booking} options={{ headerShown: false,  animation:"slide_from_left", drawerIcon: ({ focused, size }) => (<Image source={require('../images/logo2.png')} style={[ { height: 50, width: 200 }]} />)}} />  
       <Drawer.Screen name="Booking" component={Booking} options={{ headerShown: false,  animation:"slide_from_left", }} />  
       <Drawer.Screen name="Logout" component={Logout} options={{ headerShown: false,  animation:"slide_from_left", }} />
     </Drawer.Navigator>
@@ -74,11 +77,10 @@ function UserDrawer() {
 
 const App = () => {
 	useEffect(()=>{ SplashScreen.hide() },[]);
-  //return (Text>I am here</Text>);
-	
+  
   return (
 		<NavigationContainer>
-			<Stack.Navigator initialRouteName="BseLogin">
+			<Stack.Navigator initialRouteName="Login">
 				<Stack.Screen name="BseLogin" component={BseLogin} options={{ headerShown: false,  animation:"slide_from_left",}}  />
 				<Stack.Screen name="Login" component={Login} options={{ headerShown: false,  animation:"slide_from_left",}}  />
 				<Stack.Screen name="CreateAccount" component={CreateAccount} options={{ headerShown: false,  animation:"slide_from_left", }} />

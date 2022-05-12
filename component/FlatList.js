@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState, useEffect} from 'react';
 import {useCallback} from 'react';
 import {
   StyleSheet,
@@ -11,25 +11,29 @@ import {
   FlatList,
 } from 'react-native';
 import appstyle from './appstyle';
-
+import axios from 'axios';
 
 
 
 
 
 const NewFlat = () => {
-  const box 	= require('./../images/box.png');
-  const choosePackage 	= require('./../images/choosePackage.png');
-  const [selIndex, updIndex] = React.useState("0");
-  const _onViewableItemsChanged = useCallback(({ viewableItems, changed }) => {
+	const [packdata, setPackdata] = React.useState([])
+	const box 	= require('./../images/box.png');
+	const choosePackage 	= require('./../images/choosePackage.png');
+	const [selIndex, updIndex] = React.useState("0");
+	const _onViewableItemsChanged = useCallback(({ viewableItems, changed }) => {
     //console.log("Visible items are", viewableItems[0]["index"]);
     console.log("Visible items are", viewableItems);
     //console.log("===============================================");
+	const apiurl = 'https://ooduacargo.com/booking/api/package.php'
+	
+	
 	
 	let vItemKey = 0;
 	for (let vItem of viewableItems) {
 		vItemKey = vItem["key"]
-		console.log('----->> ',vItemKey,'<<-----');
+		console.log('----->> ', vItemKey, vItem,'<<-----');
 	}
 	updIndex(vItemKey); 
       ///console.log("Changed in this iteration", changed);
@@ -44,6 +48,27 @@ const NewFlat = () => {
       backgroundColor:'#2DBB54',
   }
 
+
+
+    useEffect(() => {
+        callingAPI()
+    }, [])
+
+    callingAPI = () => {
+        axios.get('https://ooduacargo.com/booking/api/package.php')
+        .then(({ data })=> {
+            //console.log('-: Hello-world :-.')
+            //console.log('-: Stock length :- ',data.length)
+            console.log(data)
+            setPackdata(data)
+            //data.map((x,y)=>{console.log('***************', y, x['symbol'], x['change'], x['lastPrice'], x['dayHigh'], x['dayLow'], x['yearHigh'], x['yearLow'], x['perChange365d'], x['perChange30d'] )})
+        })
+        .catch((err)=>{
+            console.log(err)
+        })
+    }
+
+
   //
   return (
     <View style={appstyle.container}>
@@ -55,11 +80,11 @@ const NewFlat = () => {
           horizontal 
           onViewableItemsChanged={_onViewableItemsChanged}
           viewabilityConfig={_viewabilityConfig}
-          data={MYDATA}
+          data={packdata}
           //renderItem={({ item }) => <ListItem item={item}  />}
           renderItem={
             ({item}) =>     
-            <View style={[appstyle.item, selIndex == item.key ? {backgroundColor:'#2DBB54'}:{backgroundColor:'#D6D6D6'}]}>
+            <View style={[appstyle.item, selIndex == item.id ? {backgroundColor:'#2DBB54'}:{backgroundColor:'#D6D6D6'}]}>
               <View style={appstyle.packageContent}>
                 <Text style={appstyle.packageTxt}>{item.title}</Text>
                 <Text style={appstyle.packageDetail}>{item.content}</Text>
@@ -70,7 +95,7 @@ const NewFlat = () => {
                   source={box}
                   style={appstyle.itemPhoto}
                   resizeMode="cover"
-                  onClick={()=>{console.log('====='+item.key+'----')}}
+                  onClick={()=>{console.log('====='+item.id+'----')}}
                 />
               </View>
             </View>
@@ -85,47 +110,16 @@ export default NewFlat;
 
 const MYDATA = [
       {
-        key: '1',
+        id: '1',
         title: 'MDATA',
         content: 'Dish Barrel Box',
         price: '$1111',
       },
       {
-        key: '2',
+        id: '2',
         title: 'UHBMN',
         content: 'Dish Barrel Box',
         price: '$22222',
-      },
-
-      {
-        key: '3',        
-        title: 'UMKPO',
-        content: 'Dish Barrel Box',
-        price: '$33333',
-      },
-      {
-        key: '4',
-        title: 'MKUPO',
-        content: 'Dish Barrel Box',
-        price: '$4444',
-      },
-      {
-        key: '5',
-        title: 'MKUPO',
-        content: 'Dish Barrel Box',
-        price: '$5555',
-      },
-      {
-        key: '6',
-        title: 'MKUPO',
-        content: 'Dish Barrel Box',
-        price: '$66666',
-      },
-      {
-        key: '7',
-        title: 'MKUPO',
-        content: 'Dish Barrel Box',
-        price: '$7777',
       }
     ];
 	
